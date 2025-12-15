@@ -1,127 +1,95 @@
 'use client';
-import { useEffect, useLayoutEffect, useRef } from 'react';
-import gsap from 'gsap';
-import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
-import SplitText from 'gsap/SplitText';
-gsap.registerPlugin(ScrambleTextPlugin, SplitText);
+
+import Button from '@/components/button';
 
 export default function Page() {
 	return (
-		<div className='grid h-screen w-screen grid-cols-3 gap-4 py-10'>
-			<div className='col-span-3 flex items-center justify-center'>
-				<TextScramble finalText='Hello World' fontSize='24px' />
-			</div>
-			<div className='col-span-3 flex items-center justify-center'>
-				<TextScramble
-					finalText='Hello World'
-					randomChars='01'
-					delay={200}
-					fontSize='24px'
-				/>
-			</div>
-			<div className='col-span-3 flex items-center justify-center'>
-				<TextScramble finalText='Hello World' delay={400} fontSize='24px' />
+		<div className='min-h-screen'>
+			<Title />
+			<div className='grid h-full grid-cols-12'>
+				<LeftColumn />
+				<RightColumn />
 			</div>
 		</div>
 	);
 }
 
-const TextScramble = ({
-	finalText = 'Hello World',
-	randomChars = '#@$%^&*()w+-=[]{}|;:,.<>?`~',
-	autoDelete = true,
-	delay = 0,
-	fontSize = '20px',
-}: {
-	finalText?: string;
-	randomChars?: string;
-	autoDelete?: boolean;
-	delay?: number;
-	fontSize?: string;
-}) => {
-	const ref = useRef<HTMLParagraphElement>(null);
-
-	useEffect(() => {
-		setTimeout(() => {
-			if (!ref.current) return;
-			const tl = gsap.timeline();
-			const split = SplitText.create(ref.current, {
-				type: 'chars',
-			});
-			tl.set(split.chars, { opacity: 0 });
-			tl.set(ref.current, { opacity: 1 });
-			const staggerDelay = 0.035; // Stagger between each character start
-			const charTl = gsap.timeline();
-
-			split.chars.forEach((char, index) => {
-				const randomChar =
-					randomChars[Math.floor(Math.random() * randomChars.length)];
-
-				gsap.set(char, { opacity: 1, duration: 0 });
-				// Step 1: Scramble IN from random chars to final text
-				tl.set(
-					char,
-					{
-						textContent: randomChar, // Start with random char
-						opacity: 1,
-					},
-					index * staggerDelay
-				);
-				// Step 2: Scramble IN from final text to random chars
-				tl.to(
-					char,
-					{
-						scrambleText: {
-							text: char.textContent || '',
-							chars: randomChars,
-							speed: 0.5,
-						},
-						duration: 2,
-						ease: 'linear',
-					},
-					(staggerDelay * index) / 3
-				);
-			});
-			// Step 3: Scramble OUT
-			if (autoDelete) {
-				tl.add(() => {
-					const outDelay = 0.035;
-
-					split.chars.forEach((char, index) => {
-						console.log('outDelay', outDelay * index);
-						const randomEndChar =
-							randomChars[Math.floor(Math.random() * randomChars.length)];
-
-						charTl.to(
-							char,
-							{
-								scrambleText: {
-									text: randomEndChar,
-									chars: randomChars,
-									speed: 1,
-									newClass: 'opacity-0',
-								},
-								duration: 1,
-								ease: 'linear',
-							},
-							outDelay * index
-						);
-					});
-				});
-			}
-		}, delay);
-
-		return () => {
-			if (ref.current) {
-				gsap.killTweensOf(ref.current);
-			}
-		};
-	}, []);
-
+const Title = () => {
 	return (
-		<p className='font-mono opacity-0' style={{ fontSize }} ref={ref}>
-			{/* Start with empty spaces to avoid hydration mismatch */}
-			{finalText}
-		</p>
+		<>
+			<div className='mx-[32px] mt-[24px]'>
+				<h1 className='text-display pb-2 text-center text-[7vw] leading-[0.85] font-bold tracking-[-.45vw] uppercase lg:text-[7.7vw] 2xl:text-[7.7vw]'>
+					The Atlas of Brutalism
+				</h1>
+			</div>
+			<div className='bg-foreground h-[33px]' />
+		</>
+	);
+};
+
+const LeftColumn = () => {
+	return (
+		<div className='col-span-5'>
+			<p className='pt-4 pr-[16px] pb-[32px] text-right font-mono leading-none'>
+				[Scroll to Explore]
+			</p>
+			<div className=''>
+				<img
+					src='/e09/brutalist-graphic.png'
+					alt='Left Column Background'
+					className='aspect-[688/671] h-[671px] w-full object-fill'
+				/>
+			</div>
+		</div>
+	);
+};
+
+const RightColumn = () => {
+	return (
+		<div className='col-span-7 flex flex-col gap-[200px] justify-between border-l p-4 pr-8'>
+			<div className='flex items-center justify-between'>
+				<img src='/e09/small-square.png' />
+				<div className='flex items-center gap-2'>
+					<div className='bg-foreground size-4 rounded-full' />
+					<img src='/e09/triangle.svg' />
+				</div>
+			</div>
+			<div className='grid grid-cols-7'>
+				<div className='col-span-5 pb-8'>
+					<p className='font-display font-700 text-[32px] leading-[0.92] tracking-[-2%]'>
+						Browse brutalist buildings by city, architect, or decade. Find
+						what's near you or explore iconic structures worldwide
+					</p>
+					<div className='flex items-center gap-4 pt-4'>
+						<input
+							placeholder='Search by city, architect, or decade'
+							className='col-span-2 w-full border-b pb-1 font-mono text-[18px] tracking-[-.6px]'
+						/>
+						<Button>Search</Button>
+					</div>
+				</div>
+				<div className='col-span-7 flex w-full gap-4'>
+					<div className='aspect-370/314'>
+						<img
+							src='/e09/building-1.jpg'
+							className='h-full w-full object-cover'
+						/>
+					</div>
+
+					<div className='aspect-413/314'>
+						<img
+							src='/e09/building-2.jpg'
+							className='h-full w-full object-cover'
+						/>
+					</div>
+					<div className='aspect-132/314'>
+						<img
+							src='/e09/building-3.jpg'
+							className='h-full w-full object-cover'
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
