@@ -50,12 +50,12 @@ export default function TextScramble({
 				const randomChar =
 					randomChars[Math.floor(Math.random() * randomChars.length)];
 
-				gsap.set(char, { opacity: 1, duration: 0 });
+				const startTime = index * staggerDelay;
 
 				tl.set(
 					char,
 					{ textContent: randomChar, opacity: 1 },
-					index * staggerDelay
+					startTime
 				);
 
 				tl.to(
@@ -69,7 +69,7 @@ export default function TextScramble({
 						duration: 1 / inSpeed,
 						ease: 'linear',
 					},
-					(staggerDelay * index) / 9
+					startTime
 				);
 			});
 
@@ -97,12 +97,13 @@ export default function TextScramble({
 					);
 				});
 			}
-
-			// ✅ SIMPLE: Just get the actual timeline duration and use setTimeout
 			if (onComplete) {
-				setTimeout(() => {
-					onComplete();
-				}, (tl.duration() * 1000) + delay + 1000); // Convert to milliseconds
+				setTimeout(
+					() => {
+						onComplete();
+					},
+					tl.duration() * 1000 + delay + 1000
+				);
 			}
 		}, delay);
 
