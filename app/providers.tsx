@@ -9,20 +9,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
 	const [isReady, setIsReady] = useState(false);
 
 	useEffect(() => {
-		// Check if user has already seen intro this session
 		const hasSeenIntro = sessionStorage.getItem('intro-completed');
 		setShowIntro(!hasSeenIntro);
 		setIsReady(true);
 	}, []);
 
 	const completeIntro = () => {
-		// Fade out animation
 		gsap.to('.intro-container', {
 			opacity: 0,
 			duration: 1.2,
 			ease: 'power2.inOut',
 			onComplete: () => {
-				// sessionStorage.setItem('intro-completed', 'true');
+				sessionStorage.setItem('intro-completed', 'true');
 				setShowIntro(false);
 			},
 		});

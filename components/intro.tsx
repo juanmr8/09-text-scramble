@@ -6,17 +6,16 @@ interface IntroProps {
 }
 
 function Intro({ onComplete }: IntroProps) {
-	let completedCount = 0;
-	const totalAnimations = 8; // Count all your TextScramble instances
+	const completedCount = useRef(0);
+	const totalAnimations = 8;
 
 	const handleAnimationComplete = useCallback(() => {
-		completedCount += 1;
+		completedCount.current += 1;
 
-		// When all animations are done, trigger the fade out
-		if (completedCount === totalAnimations) {
+		if (completedCount.current === totalAnimations) {
 			onComplete();
 		}
-	}, [onComplete, totalAnimations]);
+	}, [onComplete]);
 	return (
 		<div className='bg-foreground text-background grid h-screen w-screen grid-cols-3 gap-4 py-10 pointer-events-none'>
 			<div className='col-span-1 flex flex-col items-center justify-center'>

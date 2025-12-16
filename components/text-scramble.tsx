@@ -24,11 +24,11 @@ export default function TextScramble({
 	autoDelete = true,
 	delay = 0,
 	fontSize = '20px',
-	readableDuration = 1, // Default: 1 second pause
-	inSpeed = 1, // Default: 1 (current speed)
-	outSpeed = 1, // Default: 1 (current speed)
-	shuffleSpeed = 1, // Character shuffle frequency (0.3 = slower, 2 = faster)
-	onComplete, // 👈 NEW
+	readableDuration = 1,
+	inSpeed = 1,
+	outSpeed = 1,
+	shuffleSpeed = 1,
+	onComplete,
 }: TextScrambleProps) {
 	const ref = useRef<HTMLParagraphElement>(null);
 
@@ -36,7 +36,6 @@ export default function TextScramble({
 		const timeoutId = setTimeout(() => {
 			if (!ref.current) return;
 
-			// Build the timeline WITHOUT onComplete
 			const tl = gsap.timeline();
 			const split = SplitText.create(ref.current, {
 				type: 'chars',
@@ -52,11 +51,7 @@ export default function TextScramble({
 
 				const startTime = index * staggerDelay;
 
-				tl.set(
-					char,
-					{ textContent: randomChar, opacity: 1 },
-					startTime
-				);
+				tl.set(char, { textContent: randomChar, opacity: 1 }, startTime);
 
 				tl.to(
 					char,
@@ -102,7 +97,7 @@ export default function TextScramble({
 					() => {
 						onComplete();
 					},
-					tl.duration() * 1000 + delay + 1000
+					tl.duration() * 1000 + delay
 				);
 			}
 		}, delay);
